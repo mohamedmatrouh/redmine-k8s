@@ -12,10 +12,10 @@ metadata:
 spec:
   tls:
     - hosts:
-        - www.octo-redmine2.com
-      secretName: www.octo-redmine2.com-tls
+        - redmine.campus.clusterdiali.me
+      secretName: redmine.campus.clusterdiali.me-tls
   rules:
-    - host: www.octo-redmine2.com
+    - host: redmine.campus.clusterdiali.me
       http:
         paths:
           - path: /
