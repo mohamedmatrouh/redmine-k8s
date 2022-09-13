@@ -6,7 +6,7 @@ resources:
   - database/db-configmap.yaml
   - database/db-secrets.yaml
   - database/pvc.yaml
-  - database/db-deploy.yaml
+  - database/statefulset.yaml
   - database/db-svc.yaml
 
   - app/redmine-configmap.yaml

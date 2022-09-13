@@ -1,0 +1,87 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redmine-db
+  labels:
+    app.kubernetes.io/component: primary
+    app.kubernetes.io/instance: redmine-db
+    app.kubernetes.io/name: postgresql
+    app: redmine-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: primary
+      app.kubernetes.io/instance: redmine-db
+      app.kubernetes.io/name: redmine-db
+  template:
+    metadata:
+      name: redmine-db
+      labels:
+        app.kubernetes.io/component: primary
+        app.kubernetes.io/instance: redmine-db
+        app.kubernetes.io/name: redmine-db
+        app: redmine-db
+    spec:
+      securityContext:
+        runAsUser: 0
+      volumes:
+        - name: dshm
+          emptyDir:
+            medium: Memory
+        - name: data
+          persistentVolumeClaim:
+            claimName: redmine-db-claim
+      containers:
+        - name: postgresql
+          image: docker.io/bitnami/postgresql:14.5.0-debian-11-r6
+          ports:
+            - name: tcp-postgresql
+              containerPort: 5432
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: db-configmap
+            - secretRef:
+                name: db-secrets
+          resources:
+            requests:
+              cpu: 250m
+              memory: 256Mi
+          volumeMounts:
+            - name: dshm
+              mountPath: /dev/shm
+            - name: data
+              subPath: redmine
+              mountPath: /bitnami/postgresql
+          livenessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - '-c'
+                - >-
+                  exec pg_isready -U "bn_redmine" -d "dbname=bitnami_redmine" -h
+                  127.0.0.1 -p 5432
+            initialDelaySeconds: 30
+            timeoutSeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 6
+          readinessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - '-c'
+                - '-e'
+                - >
+                  exec pg_isready -U "bn_redmine" -d "dbname=bitnami_redmine" -h
+                  127.0.0.1 -p 5432
+
+                  [ -f /opt/bitnami/postgresql/tmp/.initialized ] || [ -f
+                  /bitnami/postgresql/.initialized ]
+            initialDelaySeconds: 5
+            timeoutSeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 6
+  serviceName: redmine-db
