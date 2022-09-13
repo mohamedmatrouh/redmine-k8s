@@ -1,0 +1,42 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redmine-db-deployment
+  labels:
+    app: redmine-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redmine-db
+  template:
+    metadata:
+      labels:
+        app: redmine-db
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:14-alpine
+          ports:
+            - containerPort: 5432
+          envFrom:
+            - configMapRef:
+                name: db-configmap
+            - secretRef:
+                name: db-secrets
+          resources:
+            requests:
+              memory: 100Mi
+              cpu: 100m
+            limits:
+              memory: 2048Mi
+              cpu: 1000m
+          volumeMounts:
+            - name: postgres-data-dir
+              subPath: redmine
+              mountPath: /bitnami/postgresql
+      volumes:
+        - name: postgres-data-dir
+          persistentVolumeClaim:
+            claimName: redmine-db-claim

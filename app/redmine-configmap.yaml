@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: redmine-configmap
+data:
+  ALLOW_EMPTY_PASSWORD: no
+  BITNAMI_DEBUG: "false"
+  REDMINE_DATABASE_HOST: redmine-db-svc
+  REDMINE_DATABASE_NAME: bitnami_redmine
+  REDMINE_PORT_NUMBER: "80"
+  REDMINE_DATABASE_PORT_NUMBER: "5432"
+  REDMINE_DATABASE_TYPE: postgresql
+  REDMINE_EMAIL: admin@redmine.com
+  REDMINE_LANG: en

@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: db-configmap
+data:
+  BITNAMI_DEBUG: "false"
+  PGDATA: /bitnami/postgresql/data
+  POSTGRESQL_CLIENT_MIN_MESSAGES: error
+  POSTGRESQL_ENABLE_LDAP: no
+  POSTGRESQL_ENABLE_TLS: no
+  POSTGRESQL_LOG_CONNECTIONS: "false"
+  POSTGRESQL_LOG_DISCONNECTIONS: "false"
+  POSTGRESQL_LOG_HOSTNAME: "false"
+  POSTGRESQL_PGAUDIT_LOG_CATALOG: off
+  POSTGRESQL_PORT_NUMBER: "5432"
+  POSTGRESQL_SHARED_PRELOAD_LIBRARIES: pgaudit
+  POSTGRESQL_VOLUME_DIR: /bitnami/postgresql
+  POSTGRES_DB: bitnami_redmine

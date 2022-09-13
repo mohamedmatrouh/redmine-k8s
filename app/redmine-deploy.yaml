@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redmine-deploy
+  labels:
+    app: redmine-deploy
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: redmine-deploy
+      labels:
+        app: redmine-deploy
+    spec:
+      containers:
+        - name: redmine-deploy
+          image: bitnami/redmine:5.0.2-debian-11-r23
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: redmine-configmap
+            - secretRef:
+                name: redmine-secrets
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+              scheme: HTTP
+            initialDelaySeconds: 300
+            timeoutSeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 6
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+              scheme: HTTP
+            initialDelaySeconds: 5
+            timeoutSeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 6
+          resources:
+            requests:
+              memory: 100Mi
+              cpu: 100m
+            limits:
+              memory: 2048Mi
+              cpu: 1000m
+      restartPolicy: Always
+  selector:
+    matchLabels:
+      app: redmine-deploy
